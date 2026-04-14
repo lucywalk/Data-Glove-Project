@@ -9,7 +9,8 @@ User Installation Instructions for data glove code:
 - Set device to Arduino Nano 33 BLE
 - Install the ArduinoBLE library by Arduino (https://docs.arduino.cc/libraries/arduinoble/)
 - Install the Arduino_LSM9DS1 library by Arduino (https://github.com/arduino-libraries/Arduino_LSM9DS1)
-- To recalibrate your device, uncomment the calculations for parameters a-e in the setup. This will allow you to calculate a suitable value for m, which needs to be set in the pinch constructor.
+- Download and use and Finger_class.ino file
+- To recalibrate your device, use parameters a-e in the setup. This will allow you to calculate a suitable value for m, which needs to be set in the pinch constructor.
 
 How to run the code:
 - Verify and upload to Arduino via USB cable.
@@ -23,6 +24,18 @@ Technical Details:
      𝑉_𝑜𝑢𝑡=(𝑅𝑉_𝑖𝑛)/(𝑅_𝑓𝑙𝑒𝑥+𝑅)   (voltage divider)
 - Calibration resets y intercept (c) in flex sensor charcaterisation. This is calculated by rearranging the angle calulation and setting the angle equal to zero.
 
+**MIT App Inventor Code**
+User Installation Instructions:
+- Create an account with MIT App Inventor
+- Download the Bluetooth_Array.aia file
+- Download MIT Companion on phone
+
+How to run code:
+- Link computer to companion by scanning QR code
+
+Technical Details:
+- This is a basic version of the code used in the Kotlin app
+
 **Kotlin App Code**
 User Installation Instructions for app code:
 - Install Android Studio
@@ -33,6 +46,7 @@ User Installation Instructions for app code:
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 - Create a new class/file within your package called BLEManager.kt and copy the BLEManager code into this.
 - To use the streak function, the API level will need to be increased. To do this, replace the build.gradle code with the code provided.
+- The main code is contained within the file called MainActivity.kt
 
 How to run the code:
 - If your computer has low RAM, close all other applications, otherwise the code will be very slow to run.
