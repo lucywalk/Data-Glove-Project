@@ -40,10 +40,7 @@ Technical Details:
 User Installation Instructions for app code:
 - Install Android Studio
 - Create a new project with an empty activity
-- Edit the AndroidManifest.xml to add the following permissions:
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+- Edit the AndroidManifest.xml to add permissions.
 - Create a new class/file within your package called BLEManager.kt and copy the BLEManager code into this.
 - To use the streak function, the API level will need to be increased. To do this, replace the build.gradle code with the code provided.
 - The main code is contained within the file called MainActivity.kt
