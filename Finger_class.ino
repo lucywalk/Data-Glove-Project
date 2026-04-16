@@ -39,7 +39,7 @@ class rotation{
       return bufferFilled;
     }
 
-    float find_max(){
+    float find_max(){ //loop through array to find the maximum value
       float max_value = rbuffer[0];
       for(int i = 0; i < n; i++){
         if(rbuffer[i] > max_value){
@@ -49,7 +49,7 @@ class rotation{
       return max_value;
     }
 
-    float find_min(){
+    float find_min(){ //loop through array to find minimum value
       float min_value = rbuffer[0];
       for(int i = 0; i < n; i++){
         if(rbuffer[i] < min_value){
@@ -84,7 +84,7 @@ class rotation{
       float d = find_deviation();
       float amplitude = find_max() - find_min();
       String movement;
-      if(amplitude <10){  //need to select suitable values
+      if(amplitude <10){  
         movement = "Still";
       }
       else if(amplitude < 50){
@@ -95,19 +95,19 @@ class rotation{
       }
 
       String stability;
-      if(d<20){ //need to select suitable values
+      if(d<20){ 
         stability = "Stable";
       }
       else{
         stability = "Unstable";
       }
 
-      list_calc = String(m) + "," + movement + "," + stability;
+      list_calc = String(m) + "," + movement + "," + stability; //send with commas to separate values
       dataChar.writeValue(list_calc.c_str()); //test
       return list_calc;
     }
 
-    void reset() {
+    void reset() {  //empty buffer
       bufferIndex = 0;
       bufferFilled = false;
     }
@@ -124,7 +124,7 @@ class finger{ //class to calculate parameters for each finger
 
     finger(int Pin, float M){
       pin = Pin;
-      m = M;
+      m = M;  //specify sensitivity for each finger
       max_value = 0;  //initialise all values to zero
       angle = 0;
       base_value = 0;
@@ -132,18 +132,18 @@ class finger{ //class to calculate parameters for each finger
 
     int find_angle(){
       angle = ((analogRead(pin)/1023.0*R)/(1-analogRead(pin)/1023.0)-base_value)/m; //if dividing by 1023 allows returns an int which will always be zero
-      return angle*-1; //was giving negative angles
+      return angle*-1; //to give positive angles
     }
 
     int find_max(){
-      int a = find_angle(); //means that the angle fucntion doesn't need to be called before
+      int a = find_angle(); //call angle function so not dependent on this being called before
       if (a>max_value){
         max_value = a;
       }
       return max_value;
     }
 
-    float calibrate(){
+    float calibrate(){ //reset y intercept
       base_value = (analogRead(pin)*R/1023.0)/(1-analogRead(pin)/1023.0);
       return base_value;
     }
@@ -166,6 +166,7 @@ class hand{ //calculates values for all fingers simultaneously using finger clas
     String list_angles;
     String list_max;
 
+    //set microcontroller pins and sensitivity for each sensor
     hand(int thumb_pin, float thumb_m, int index_pin, float index_m, int middle_pin, float middle_m, int ring_pin, float ring_m, int pinky_pin, float pinky_m)
     : thumb(thumb_pin, thumb_m), indexf(index_pin, index_m), middle(middle_pin, middle_m),  ring(ring_pin, ring_m), pinky(pinky_pin, pinky_m) {}
 
@@ -177,7 +178,7 @@ class hand{ //calculates values for all fingers simultaneously using finger clas
       pinky.calibrate();
     }
 
-    void debug_pins() { //used to check if constructor was working
+    void debug_pins() { //used to check if constructor is working
       Serial.print("Thumb pin: ");
       Serial.println(thumb.pin);
       Serial.print("Index pin: ");
@@ -188,15 +189,15 @@ class hand{ //calculates values for all fingers simultaneously using finger clas
       unsigned long current_time = (millis() - start_time)/1000; //calculate time from start of program
       list_angles = String(current_time) + "," + String(thumb.find_angle()) + "," + String(indexf.find_angle()) + "," + String(middle.find_angle()) + "," + String(ring.find_angle()) + "," + String(pinky.find_angle()); // + "," + wr;
       dataChar.writeValue(list_angles.c_str());
-      Serial.println(list_angles);
+      Serial.println(list_angles); //print to serial terminal for debugging
     }
 
-    String calculate_max(){ //use MAX so MIT can distinguish between angles and maximum values
+    String calculate_max(){ //use MAX so app can distinguish between angles and maximum values
       list_max = "MAX," + String(thumb.find_max()) + "," + String(indexf.find_max()) + "," + String(middle.find_max()) + "," + String(ring.find_max())+ "," + String(pinky.find_max()); //3 values so MIT doesn't crash
       return list_max;
     }
 
-    void send_max(){
+    void send_max(){ //separate function for sending max, as it needs to be constantly updates but not sent
       list_max = calculate_max();
       dataChar.writeValue(list_max.c_str());
       Serial.println(list_max);
@@ -211,15 +212,15 @@ class hand{ //calculates values for all fingers simultaneously using finger clas
     }
 };
 
-volatile bool calibrateFlag; //flags to set what mode it is in
+volatile bool calibrateFlag; //flags to set what mode code is in
 volatile bool sendingFlag;
 volatile bool wristFlag;
 volatile bool exitFlag;
 
 
 rotation wrist;
-hand pinch(A0,1,A1,1.05,A2,0.9,A4,0.78,A5,0.57);
-String incoming;
+hand pinch(A0,0.7,A1,0.67,A2,0.72,A4,0.67,A5,0.9); //set pins and sensitivity
+String incoming; //string to check parameters sent to device via BLE
 
 void setup() {
   Serial.begin(9600);
@@ -236,7 +237,7 @@ void setup() {
     while (1);
   }
 
-  BLE.setLocalName("Tiny Ted's Telecom");
+  BLE.setLocalName("Tiny Ted's Telecom");  //advertise device name
   BLE.setAdvertisedService(sensorService); //advertise data glove
   sensorService.addCharacteristic(dataChar); //add capabilities to service
   sensorService.addCharacteristic(rxChar);
@@ -244,13 +245,13 @@ void setup() {
   dataChar.writeValue("Ready");
   BLE.advertise();
   Serial.println("Bluetooth active");
-  pinch.calibrate_hand();
+  pinch.calibrate_hand();  //automatically calibrate device when turned on
   calibrateFlag = false; //set all flags to false to prevent unanticipated behaviour
   sendingFlag = false;
   wristFlag = false;
   exitFlag = false;
   
-  float a = analogRead(A0);
+  float a = analogRead(A0);  // parameters to caculate sensitivity of sensors (find difference between output when flat and at 90 degrees and then divde by 90)
   float b = analogRead(A1);
   float c = analogRead(A2);
   float d = analogRead(A4);
@@ -269,7 +270,7 @@ void loop() {
   if (central.connected()) { //check if connected
     String a = rxChar.value(); //read incoming strings
 
-    if (a == "c") {
+    if (a == "c") { //set flags according to strings
       calibrateFlag = true;
       sendingFlag = false;
       wristFlag = false;
@@ -333,6 +334,7 @@ void loop() {
   }
 
   else{
+    //if the device disconnects the following code is executed
     BLE.advertise(); //rescan for connection
     start_time = millis(); //reset timer and max values
     pinch.Reset_max();
