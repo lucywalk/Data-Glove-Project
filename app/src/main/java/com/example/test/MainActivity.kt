@@ -372,7 +372,7 @@ fun LevelScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            if (status != "Connected!" && status != "Ready!" && status != "Streaming...") {
+            if ((status != "Connected!"&& status != "Ready!" && status != "Streaming...")|| (status == "Not connected")) {
                 Button(onClick = { bleManager.startScan() }) {
                     Text("Connect")
                 }
@@ -389,7 +389,7 @@ fun LevelScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 if (status == "Streaming..." &&isStarted){
                         Button(onClick = {
-                            bleManager.sendCalibrate()
+                            bleManager.sendEnd()
                             saveHighScore(context, level, levelScore)
                             onScoreAdd(levelScore)
                             onBack()

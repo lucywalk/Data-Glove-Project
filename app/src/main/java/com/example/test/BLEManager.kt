@@ -63,12 +63,23 @@ class BLEManager(private val context: Context, private val activity: Activity) {
             status: Int,
             newState: Int
         ) {
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                _status.value = "Connected!"
-                bluetoothGatt = gatt
+            when (newState) {
 
-                if (hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
-                    gatt.discoverServices()
+                BluetoothProfile.STATE_CONNECTED -> {
+                    _status.value = "Connected!"
+                    bluetoothGatt = gatt
+
+                    if (hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
+                        gatt.discoverServices()
+                    }
+                }
+
+                BluetoothProfile.STATE_DISCONNECTED -> {
+                    _status.value = "Disconnected"
+
+                    bluetoothGatt?.close()
+                    bluetoothGatt = null
+                    writeCharacteristic = null
                 }
             }
         }
