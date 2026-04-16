@@ -1,5 +1,6 @@
-package com.example.test
+package com.example.test //link to app
 
+//import all packages
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.*
@@ -35,7 +36,7 @@ class BLEManager(private val context: Context, private val activity: Activity) {
     private var bluetoothGatt: BluetoothGatt? = null
     private var writeCharacteristic: BluetoothGattCharacteristic? = null
 
-    // 🔥 Shared data (accessible anywhere)
+    //shared data
     private val _status = MutableStateFlow("Not connected")
     val status: StateFlow<String> = _status
 
@@ -55,7 +56,6 @@ class BLEManager(private val context: Context, private val activity: Activity) {
     private val _pinky = MutableStateFlow(0f)
     val pinky: StateFlow<Float> = _pinky
 
-    // ✅ GATT CALLBACK
     private val gattCallback = object : BluetoothGattCallback() {
 
         override fun onConnectionStateChange(
@@ -192,7 +192,6 @@ class BLEManager(private val context: Context, private val activity: Activity) {
         }
     }
 
-    // ✅ SCAN CALLBACK
     private val scanCallback = object : ScanCallback() {
 
         override fun onScanResult(callbackType: Int, result: ScanResult) {
