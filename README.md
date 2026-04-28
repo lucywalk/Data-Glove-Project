@@ -52,6 +52,7 @@ How to run the code:
 - Then go to settings -> system -> developer options and enable USB debugging.
 - Connect your computer to your phone via USB and you will be prompted to allow USB debugging each time you do this. Once you do, this will show up as a device option to run the code on.
 - Within app permissions, the location needs to be enabled for the BLE communication to work.
+- To see the code in action, there is a video of level one and the reset function.
 
 Future Improvements:
 - Develop more levels based on stroke rehabilitation exercises.
